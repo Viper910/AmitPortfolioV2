@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Box, Button, Container, OutlinedInput, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, Container, Stack, TextField, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { TextColor } from "../themeConf/Theme";
 
 export default function Contact() {
@@ -26,20 +26,22 @@ export default function Contact() {
         setStatusMessage("Sending your message...");
 
         try {
+            const formData = new FormData();
+            formData.append("name", `${firstName} ${lastName}`.trim() || "Visitor");
+            formData.append("email", email);
+            formData.append("message", message);
+            formData.append("_subject", `Portfolio contact from ${firstName || "Visitor"} ${lastName}`.trim());
+            formData.append("_replyto", email);
+            formData.append("_autoresponse", "Thanks for reaching out! I received your message and will get back to you soon.");
+            formData.append("_template", "table");
+            formData.append("_captcha", "false");
+
             const response = await fetch("https://formsubmit.co/ajax/amitkumarbehera987@gmail.com", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     "Accept": "application/json",
                 },
-                body: JSON.stringify({
-                    name: `${firstName} ${lastName}`.trim() || "Visitor",
-                    email,
-                    message,
-                    _subject: `Portfolio contact from ${firstName || "Visitor"} ${lastName}`.trim(),
-                    _template: "table",
-                    _captcha: "false"
-                }),
+                body: formData,
             });
 
             const data = await response.json();
@@ -82,12 +84,28 @@ export default function Contact() {
                     justifyContent="center"
                     alignContent='flex-end'
                 >
-                    <Box maxWidth="sm" boxShadow={4} padding={4}>
-                        <Typography variant="h5" textAlign='center' marginBottom='2em' fontWeight={600}><TextColor text="Contact Me" /></Typography>
+                    <Box
+                        maxWidth="sm"
+                        boxShadow={4}
+                        padding={4}
+                        sx={{
+                            borderRadius: 3,
+                            bgcolor: 'background.paper',
+                            border: '1px solid',
+                            borderColor: 'divider'
+                        }}
+                    >
+                        <Typography variant="h5" textAlign='center' marginBottom='1rem' fontWeight={700}>
+                            <TextColor text="Contact Me" />
+                        </Typography>
+                        <Typography variant="body2" textAlign='center' color="text.secondary" marginBottom={3}>
+                            Have a question or want to collaborate? Share your details below and I’ll reply to your email.
+                        </Typography>
                         <Box component="form" onSubmit={handleSubmit}>
-                            <Stack direction='row' spacing={1} width="100%" marginBottom='10px'>
+                            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} width="100%" marginBottom={2}>
                                 <TextField
                                     id="first-name"
+                                    name="firstName"
                                     label="First Name"
                                     variant="filled"
                                     fullWidth
@@ -96,6 +114,7 @@ export default function Contact() {
                                 />
                                 <TextField
                                     id="last-name"
+                                    name="lastName"
                                     label="Last Name"
                                     variant="filled"
                                     fullWidth
@@ -103,27 +122,40 @@ export default function Contact() {
                                     onChange={(event: ChangeEvent<HTMLInputElement>) => setLastName(event.target.value)}
                                 />
                             </Stack>
-                            <Stack direction='column' spacing={1}>
+                            <Stack direction='column' spacing={2}>
                                 <TextField
                                     id="email"
-                                    label="Mail Id"
+                                    name="email"
+                                    label="Email Address"
                                     type="email"
                                     variant="filled"
                                     fullWidth
+                                    required
+                                    helperText="A confirmation email will be sent to this address."
                                     value={email}
                                     onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
                                 />
-                                <OutlinedInput
+                                <TextField
                                     id="message"
-                                    placeholder="Please leave a message.."
+                                    name="message"
+                                    label="Message"
+                                    placeholder="Type your message here..."
                                     multiline
                                     rows={6}
+                                    variant="filled"
                                     fullWidth
+                                    required
                                     value={message}
                                     onChange={(event: ChangeEvent<HTMLInputElement>) => setMessage(event.target.value)}
                                 />
-                                <Button type="submit" variant="contained" size="small" disabled={isSubmitting}>
-                                    {isSubmitting ? "Sending..." : "Send"}
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    size="large"
+                                    disabled={isSubmitting}
+                                    sx={{ alignSelf: 'flex-start', px: 4 }}
+                                >
+                                    {isSubmitting ? "Sending..." : "Send Message"}
                                 </Button>
                                 {statusMessage && (
                                     <Typography variant="body2" sx={{ marginTop: 1, color: statusColor }}>
