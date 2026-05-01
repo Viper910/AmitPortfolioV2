@@ -12,7 +12,7 @@ export default function Navbar() {
         { link: '/', title: 'Home' },
         { link: '/experience', title: 'Experience' },
         { link: '/skills', title: 'Skills' },
-        { link: 'https://drive.google.com/file/d/1KcdxdYK9bKmb1dY50TMrrgmSfIUWp_Ot/view?usp=drive_link', title: 'Resume' },
+        { link: 'https://docs.google.com/document/d/1FO_8evjRQ3LtSQraUFHblZN3ezV8X4-ESIg1fMbrmFE/edit?tab=t.0', title: 'Resume' },
         { link: '/contact', title: 'Contact' }
     ];
 
